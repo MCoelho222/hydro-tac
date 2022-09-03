@@ -129,7 +129,7 @@ def hydroplots(df, overallmax, figfilename, figtitle, risco, leg_position):
   
     if len(df) == 0:
         return {'error': 'empty dataframe'}
-    overallmax['Fósforo Total'] = 0.99
+    # overallmax['Fósforo Total'] = 0.99
     for param in df.keys():
         
         paramdf = df[param]

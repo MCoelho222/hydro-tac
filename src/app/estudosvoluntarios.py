@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from src.app.utils import sort_str_endswithnum
 from src.app.utils import replace_as_lastcols
+from src.app.challenge import removerepeateddates
 
 def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters=None, ts=None):
     """-----------------------------------------------------------------------------------------------------
@@ -91,25 +92,17 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
             for val in colvalues:
                 filtered = df_cols[df_cols[colname] == val]
                 filtered = filtered.reset_index(drop=True)
-                # print('FILTERED', val, filtered)
+               
                 if key == 'param':
                     max_df = pd.DataFrame(columns=cols)
                     for river in allrivers:
-                        # for i in range(len(filtered)):
-                        #     check = filtered.loc[i, site_col]
+                       
                         river_filtered = filtered[filtered[site_col] == river]
-                        # print(val, river, filtered)
                         if len(river_filtered) > 0:
                             max_df = pd.concat([max_df, river_filtered], axis=0, ignore_index=True)
-                    # print('MAXDF', len(max_df))
                     max_val = max_df[result_col].max()
-                    # print('MAX', max_val)
 
                     overallmax[val] = max_val
-                    # for param in riskparams:
-                    # df_max = df_cols[df_cols[param_col] == param]
-                    # maxvalue = df_max[result_col].max()
-                    # overallmax[param] = maxvalue
                 
                 if len(filtered) > 0:
                     df_new = pd.concat([df_new, filtered], axis=0, ignore_index=True)
@@ -183,34 +176,8 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
                         param_filtered = param_filtered.reset_index(drop=True)
 
                         if len(param_filtered) >= 2:
-                            for i in range(len(param_filtered) - 1):
-
-                                year1 = param_filtered.loc[i, date_col].year
-                                month1 = param_filtered.loc[i, date_col].month
-                                if len(str(month1)) == 1:
-                                    month1 = f'0{param_filtered.loc[i, date_col].month}'
-                                day1 = param_filtered.loc[i, date_col].day
-                                if len(str(day1)) == 1:
-                                    day1 = f'0{param_filtered.loc[i, date_col].day}'
-                             
-                                date_before = np.datetime64(f'{year1}-{month1}-{day1}')
-                                
-                                year2 = param_filtered.loc[i + 1, date_col].year
-                                month2 = param_filtered.loc[i + 1, date_col].month
-                                if len(str(month2)) == 1:
-                                    month2 = f'0{param_filtered.loc[i + 1, date_col].month}'
-                                day2 = param_filtered.loc[i + 1, date_col].day
-                                if len(str(day2)) == 1:
-                                    day2 = f'0{param_filtered.loc[i + 1, date_col].day}'
-                                
-                                date_next = np.datetime64(f'{year2}-{month2}-{day2}')
-                                
-                                if date_next == date_before:
-
-                                    avg = param_filtered.loc[i: i + 2, result_col].mean()
-                                    param_filtered.loc[i + 1, result_col] = avg
-                                    param_filtered = param_filtered.drop(i)
-                        
+                            param_filtered = removerepeateddates(param_filtered, date_col, result_col)
+                           
                         if len(param_filtered) > 0:
                             
                             owner_sitedf['Data'] = pd.to_datetime(param_filtered[date_col])
@@ -222,6 +189,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
                         
                 owner_tsdf = replace_as_lastcols(owner_tsdf, ('VMP', 'Unidade'))
                 owner_tsdf = owner_tsdf.sort_values(by='Data', ascending=True)
+                owner_tsdf = owner_tsdf.reset_index(drop=True)
 
                 params_df[param] = owner_tsdf
                 tidaldf[tide] = params_df
