@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from src.app.utils import sort_str_endswithnum
 from src.app.utils import replace_as_lastcols
-from src.app.challenge import removerepeateddates
+from src.app.utils.challenge import removerepeateddates
 
 def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters=None, ts=None):
     """-----------------------------------------------------------------------------------------------------

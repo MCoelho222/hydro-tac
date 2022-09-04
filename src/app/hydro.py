@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from src.app.utils import replace_as_lastcols
-from src.app.challenge import removerepeateddates
+from src.app.utils.challenge import removerepeateddates
 
 def hydroalunorte(risco, df, cols, str_filters, val_filters=None, ts=None):
     """-----------------------------------------------------------------------------------------------------

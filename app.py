@@ -6,8 +6,8 @@ from src.app.utils.graphs import voluntariosplot, hydroplots
 
 if __name__ == "__main__":
     
-    df = pd.read_excel('estudos_vonluntarios_agua superficial_reva_original.xlsx', sheet_name='agua_sup')
-    # df = pd.read_excel('BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
+    # df = pd.read_excel('estudos_vonluntarios_agua superficial_reva_original.xlsx', sheet_name='agua_sup')
+    df = pd.read_excel('BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
     
     cols_volun = ['Empresa responsável', 'Local', 'Matriz', 'Ponto', 'Amostra', 'Data da coleta', 'Maré', 'Parâmetros', 'Resultado', 'Unidade', 'VMP', 'Legislação']
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     rivers_name = {'murucupi': murucupi, 'para': para, 'pramajo': pramajo, 'pramajozinho': pramajozinho, 'taua': taua, 'aguaverde': aguaverde, 'barcarena': barcarena}
    
     
-    ts_dict = {'site': ('Ponto', ()), 'date': ('Data da coleta', ()), 'result': ('Resultado', ()), 'unit': ('Unidade', ()), 'tide': ('Maré', {'Geoklock': ('Cheia', 'Vazante'), 'Enviro-Tec': ('Sem maré', 'Maré'), 'SGW': ('Enchente', 'Vazante', 'Sem maré')}), 'sample': ('Amostra', (1,))}
+    # ts_dict = {'site': ('Ponto', ()), 'date': ('Data da coleta', ()), 'result': ('Resultado', ()), 'unit': ('Unidade', ()), 'tide': ('Maré', {'Geoklock': ('Cheia', 'Vazante'), 'Enviro-Tec': ('Sem maré', 'Maré'), 'SGW': ('Enchente', 'Vazante', 'Sem maré')}), 'sample': ('Amostra', (1,))}
 
     rivername = 'murucupi'
 
@@ -44,33 +44,33 @@ if __name__ == "__main__":
     
     figtitles = ['Rio Murucupi', 'Rio Pará', 'Igarapé Tauá', 'Igarapé Pramajó', 'Igarapé Pramajozinho', 'Igarapé Água Verde']
     risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio', 'Sódio Total', 'pH')}
-    rivers = ['murucupi', 'para', 'taua', 'pramajo', 'pramajozinho', 'aguaverde']
+    # rivers = ['murucupi', 'para', 'taua', 'pramajo', 'pramajozinho', 'aguaverde']
     owners = ['Geoklock', 'Enviro-Tec', 'SGW']
     risk_title = 'RISCO_12'
     
     risk = risk_params['risk12']
     
-    for i in range(len(rivers)):
+    # for i in range(len(rivers)):
         
-        for j in range(len(owners)):
+    #     for j in range(len(owners)):
 
-            str_filter_dict = {'param': ('Parâmetros', risk), 'site': ('Local', rivers_name[rivers[i]]), 'owner': ('Empresa responsável', (owners[j],))}
+    #         str_filter_dict = {'param': ('Parâmetros', risk), 'site': ('Local', rivers_name[rivers[i]]), 'owner': ('Empresa responsável', (owners[j],))}
 
-            val_filter_dict = {'Resultado': ('positive', 'nan')}
+    #         val_filter_dict = {'Resultado': ('positive', 'nan')}
         
-            ts_df = estudosvolun(risk_title, rivers[i], df, cols_volun, str_filter_dict, allrivers, val_filters=val_filter_dict, ts=ts_dict)
-            # print(ts_df['overallmax'])
-            # print(ts_df['ownermax'])
-            if len(ts_df['dataframes']) > 0:
-                voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], figtitles[i], risk_title, positions[rivers[i]])
+    #         ts_df = estudosvolun(risk_title, rivers[i], df, cols_volun, str_filter_dict, allrivers, val_filters=val_filter_dict, ts=ts_dict)
+    #         # print(ts_df['overallmax'])
+    #         # print(ts_df['ownermax'])
+    #         if len(ts_df['dataframes']) > 0:
+    #             voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], figtitles[i], risk_title, positions[rivers[i]])
    
 
-    # cols_hydro = ['Código do ponto', 'Local', 'Data Coleta', 'Parâmetro', 'Valor', 'Unidade', 'VMP']
-    # rivers = ('Rio Murucupi', 'Rio Pará', 'Igarapé Tauá', 'Igarapé Pramajozinho', 'Igarapé Água Verde')
-    # ts_dict = {'site': ('Código do ponto', ()), 'date': ('Data Coleta', ()), 'result': ('Valor', ()), 'unit': ('Unidade', ())}
-    # str_filter_dict = {'param': ('Parâmetro', risk), 'river': ('Local', rivers)}
-    # val_filter_dict = {'Valor': ('positive', 'nan')}
+    cols_hydro = ['Código do ponto', 'Local', 'Data Coleta', 'Parâmetro', 'Valor', 'Unidade', 'VMP']
+    rivers = ('Rio Murucupi', 'Rio Pará', 'Igarapé Tauá', 'Igarapé Pramajozinho', 'Igarapé Água Verde')
+    ts_dict = {'site': ('Código do ponto', ()), 'date': ('Data Coleta', ()), 'result': ('Valor', ()), 'unit': ('Unidade', ())}
+    str_filter_dict = {'param': ('Parâmetro', risk), 'river': ('Local', rivers)}
+    val_filter_dict = {'Valor': ('positive', 'nan')}
 
-    # dfs = hydroalunorte(risk_title, df, cols_hydro, str_filter_dict, val_filters=val_filter_dict, ts=ts_dict)
+    dfs = hydroalunorte(risk_title, df, cols_hydro, str_filter_dict, val_filters=val_filter_dict, ts=ts_dict)
 
-    # hydroplots(dfs['dataframes']['perparam'], dfs['overallmax'], 'monit_cont', 'monitoramento contínuo', risk_title, 'best')
+    hydroplots(dfs['dataframes']['perparam'], dfs['overallmax'], 'monit_cont', 'monitoramento contínuo', risk_title, 'best')
