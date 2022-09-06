@@ -3,7 +3,7 @@ import numpy as np
 from src.app.utils import replace_as_lastcols
 from src.app.utils.challenge import removerepeateddates
 
-def hydroalunorte(risco, df, cols, str_filters, val_filters=None, ts=None):
+def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None):
     """-----------------------------------------------------------------------------------------------------
     PARAMS
     --------------------------------------------------------------------------------------------------------
@@ -133,6 +133,7 @@ def hydroalunorte(risco, df, cols, str_filters, val_filters=None, ts=None):
                 continue
                         
             maxvalue = river_df[result_col].max()
+            # print('PASSEI')
             rivermaxvals[river] = maxvalue
             river_sites_df = pd.DataFrame(columns=['Data', unit_col, vmp_col])
             
@@ -168,35 +169,44 @@ def hydroalunorte(risco, df, cols, str_filters, val_filters=None, ts=None):
         perriverdfs[param] = river_ts      
         param_ts[param] = param_tsdf
         
-    with pd.ExcelWriter(f'dataframes\{risco}\{risco}_monit_cont.xlsx') as writer1:
+    with pd.ExcelWriter(f'dataframes\{risco}\Hydro\{mode.upper()}_{risco}_monit_cont.xlsx') as writer1:
         for param in param_ts.keys():
 
             param_ts[param].to_excel(writer1, sheet_name=param)
 
-    for param in perriverdfs.keys():
-        with pd.ExcelWriter(f'dataframes\{risco}\{risco}_{param}_monit_cont.xlsx') as writer2:
-            for river in perriverdfs[param].keys():
-                
-                perriverdfs[param][river].to_excel(writer2, sheet_name=river)
     parammaxvals = {}
-    print(allriversmaxvals)
+   
     for param in allriversmaxvals.keys():
-        print(param)
+      
         maxparam = []
         for riv in allriversmaxvals[param].keys():
-            print('RIV', riv)
             finalmax = allriversmaxvals[param][riv]
-            
             maxparam.append(finalmax)
-        print(maxparam)
         maxparam2 = np.array(maxparam)
-        # if len(maxparam) == 0:
-        #     parammaxvals[param] = np.nan
-
-        parammaxvals[param] = np.max(maxparam2)
         
+        parammaxvals[param] = np.max(maxparam2)
+    # print(parammaxvals)    
 
 
     return {'dataframes': {'perparam':param_ts, 'perriver': perriverdfs}, 'maximos': allriversmaxvals, 'overallmax': parammaxvals} 
    
-        
+if __name__ == "__main__":
+
+    from src.app.utils.graphs import hydroplots
+
+    df = pd.read_excel('BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
+
+    risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio', 'Sódio Total', 'pH')}
+   
+    risk_title = 'RISCO_12'
+    mode = 'sup'
+    risk = risk_params['risk12']
+    cols_hydro = ['Código do ponto', 'Local', 'Data Coleta', 'Parâmetro', 'Valor', 'Unidade', 'VMP']
+    rivers = ('Rio Murucupi', 'Rio Pará', 'Igarapé Tauá', 'Igarapé Pramajozinho', 'Igarapé Água Verde')
+    ts_dict = {'site': ('Código do ponto', ()), 'date': ('Data Coleta', ()), 'result': ('Valor', ()), 'unit': ('Unidade', ())}
+    str_filter_dict = {'param': ('Parâmetro', risk), 'river': ('Local', rivers)}
+    val_filter_dict = {'Valor': ('positive', 'nan')}
+
+    dfs = hydroalunorte(risk_title, df, cols_hydro, str_filter_dict, mode, val_filters=val_filter_dict, ts=ts_dict)
+
+    hydroplots(dfs['dataframes']['perparam'], dfs['overallmax'], 'monit_cont', 'monitoramento contínuo', risk_title, 'best')

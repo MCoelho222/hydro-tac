@@ -4,7 +4,7 @@ from src.app.utils import sort_str_endswithnum
 from src.app.utils import replace_as_lastcols
 from src.app.utils.challenge import removerepeateddates
 
-def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters=None, ts=None):
+def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, mode, val_filters=None, ts=None):
     """-----------------------------------------------------------------------------------------------------
     PARAMS
     --------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
     ------------------------------------------------------------------------------------------------------"""
   
     df_cols = df.loc[:, cols]
-    
+    # print(df_cols)
     param_col = str_filters['param'][0] 
     params = str_filters['param'][1] 
     tide_col = ts['tide'][0] 
@@ -69,14 +69,14 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
                 df_cols.loc[i, vmp_col] = cell_vmp/1000
             except:
                 pass
-
-        if cell_param == 'pH' and cell_site in allrivers:
-            df_cols.loc[i, vmp_col] = '6 a 9'
-            df_cols.loc[i, unit_col] = 'pH'
-        if cell_param == 'Sulfato' and cell_site in allrivers:
-            df_cols.loc[i, vmp_col] = 250.
-        if cell_param == 'Fósforo Total' and cell_site in allrivers:
-            df_cols.loc[i, vmp_col] = 0.1
+        if mode == 'sup':
+            if cell_param == 'pH' and cell_site in allrivers:
+                df_cols.loc[i, vmp_col] = '6 a 9'
+                df_cols.loc[i, unit_col] = 'pH'
+            if cell_param == 'Sulfato' and cell_site in allrivers:
+                df_cols.loc[i, vmp_col] = 250.
+            if cell_param == 'Fósforo Total' and cell_site in allrivers:
+                df_cols.loc[i, vmp_col] = 0.1
     
     overallmax = {}
     for key in str_filters.keys():
@@ -99,7 +99,10 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
                        
                         river_filtered = filtered[filtered[site_col] == river]
                         if len(river_filtered) > 0:
-                            max_df = pd.concat([max_df, river_filtered], axis=0, ignore_index=True)
+                            for owner in allowners:
+                                owner_filtered = river_filtered[river_filtered[owner_col] == owner]
+                                if len(owner_filtered) > 0:
+                                    max_df = pd.concat([max_df, owner_filtered], axis=0, ignore_index=True)
                     max_val = max_df[result_col].max()
 
                     overallmax[val] = max_val
@@ -108,9 +111,11 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
                     df_new = pd.concat([df_new, filtered], axis=0, ignore_index=True)
                    
             df_cols = df_new.copy(deep=True)
+            # print(df_cols)
             if len(df_cols) == 0:
                 return {'dataframes': df_cols, 'empty_df_cause': val}
-    
+    # print(overallmax)
+    # asd
     if not ts:
         return {'dataframes': df_cols}
         
@@ -149,7 +154,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
 
         tidaldf = {}
         for tide in tide_cond[site_own]:
-          
+            
             tide_df = own_df[own_df[tide_col] == tide]
          
             if len(tide_df) == 0:
@@ -167,8 +172,8 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
                     if site in tide_df[pt_col].values.tolist():
                         site_filtered = tide_df[tide_df[pt_col] == site]
         
-                        if site_own == 'Enviro-Tec':
-                            site_filtered = site_filtered[site_filtered[sample_col] == 1]
+                        # if site_own == 'Enviro-Tec':
+                        #     site_filtered = site_filtered[site_filtered[sample_col] == 1]
             
                         owner_sitedf = pd.DataFrame()
                      
@@ -177,6 +182,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
 
                         if len(param_filtered) >= 2:
                             param_filtered = removerepeateddates(param_filtered, date_col, result_col)
+                            # param_filtered = removerepeateddates(param_filtered, date_col, result_col)
                            
                         if len(param_filtered) > 0:
                             
@@ -188,6 +194,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
                             owner_tsdf = owner_tsdf.merge(owner_sitedf, how='outer', on=['Data', unit_col, vmp_col])
                         
                 owner_tsdf = replace_as_lastcols(owner_tsdf, ('VMP', 'Unidade'))
+                owner_tsdf = removerepeateddates(owner_tsdf, 'Data')
                 owner_tsdf = owner_tsdf.sort_values(by='Data', ascending=True)
                 owner_tsdf = owner_tsdf.reset_index(drop=True)
 
@@ -199,7 +206,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, val_filters
         if len(timeseries) > 0:
             for owner in timeseries.keys():
                 for tidal in timeseries[owner].keys():
-                    with pd.ExcelWriter(f'dataframes\{risco}\{owner}_{rivername.upper()}_{tidal}_{risco}.xlsx') as writer:
+                    with pd.ExcelWriter(f'dataframes\{risco}\{owner}\{mode.upper()}_{rivername}_{risco}_{owner}_{tidal}.xlsx') as writer:
                         for tsdf in timeseries[owner][tidal].keys():
                             timeseries[owner][tidal][tsdf].to_excel(writer, sheet_name=tsdf)
     # print(timeseries)
