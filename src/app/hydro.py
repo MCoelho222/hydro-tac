@@ -66,7 +66,7 @@ def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None)
             pass
 
         if cell_param == 'pH' and cell_river in rivers:
-
+            # print('HEYEHEY')
             df_cols.loc[i, vmp_col] = '6 a 9'
             df_cols.loc[i, unit_col] = 'pH'
         if cell_param == 'Sulfato' and cell_river in rivers:
@@ -168,6 +168,7 @@ def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None)
         allriversmaxvals[param] = rivermaxvals
         perriverdfs[param] = river_ts      
         param_ts[param] = param_tsdf
+        # print(param_tsdf)
         
     with pd.ExcelWriter(f'dataframes\{risco}\Hydro\{mode.upper()}_{risco}_monit_cont.xlsx') as writer1:
         for param in param_ts.keys():
@@ -196,11 +197,11 @@ if __name__ == "__main__":
 
     df = pd.read_excel('BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
 
-    risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio', 'Sódio Total', 'pH')}
+    risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio total', 'pH')}
    
-    risk_title = 'RISCO_12'
+    risk_title = 'RISCO_17'
     mode = 'sup'
-    risk = risk_params['risk12']
+    risk = risk_params['risk17']
     cols_hydro = ['Código do ponto', 'Local', 'Data Coleta', 'Parâmetro', 'Valor', 'Unidade', 'VMP']
     rivers = ('Rio Murucupi', 'Rio Pará', 'Igarapé Tauá', 'Igarapé Pramajozinho', 'Igarapé Água Verde')
     ts_dict = {'site': ('Código do ponto', ()), 'date': ('Data Coleta', ()), 'result': ('Valor', ()), 'unit': ('Unidade', ())}

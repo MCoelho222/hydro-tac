@@ -2,8 +2,8 @@ def sort_str_endswithnum(str_endwithnum_list, split_char):
     ints = []
     ordered_sites = []
     for k in str_endwithnum_list:
-        # print(str_endwithnum_list)
-        # print(k)
+        print(str_endwithnum_list)
+        print(k)
         point = k.split(split_char)[1]
         # print(point)
         idx = -1

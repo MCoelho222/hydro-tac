@@ -61,14 +61,18 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
         cell_param = df_cols.loc[i, param_col]
         cell_site = df_cols.loc[i, site_col]
         # mu = '\u03BC'
+        # print(cell_unit)
+        try:
+            if cell_unit[1:] == 'g/L' and cell_unit[0] != 'm' and cell_unit[0] != 'k':
 
-        if cell_unit[1:] == 'g/L' and cell_unit[0] != 'm' and cell_unit[0] != 'k':
-            df_cols.loc[i, result_col] = cell_value/1000.
-            df_cols.loc[i, unit_col] = 'mg/L'
-            try:
-                df_cols.loc[i, vmp_col] = cell_vmp/1000
-            except:
-                pass
+                df_cols.loc[i, result_col] = cell_value/1000.
+                df_cols.loc[i, unit_col] = 'mg/L'
+                try:
+                    df_cols.loc[i, vmp_col] = cell_vmp/1000
+                except:
+                    pass
+        except:
+            pass
         if mode == 'sup':
             if cell_param == 'pH' and cell_site in allrivers:
                 df_cols.loc[i, vmp_col] = '6 a 9'
@@ -131,7 +135,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
             sites = owner_df[pt_col]
             
             for ind in sites.index:
-              
+                
                 site_name = sites[ind]
                 if site_name not in unique_sites:
                     unique_sites.append(site_name)
@@ -139,6 +143,8 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
            
             if owner == 'Geoklock' or owner == 'Enviro-Tec' or owner == 'SGW':
                 ordered_sites = sort_str_endswithnum(unique_sites, '-')
+                # print(ordered_sites)
+                # asd
                 owners_sites[owner] = ordered_sites
              
     
@@ -185,7 +191,7 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
                             # param_filtered = removerepeateddates(param_filtered, date_col, result_col)
                            
                         if len(param_filtered) > 0:
-                            
+                            print(param_filtered[date_col])
                             owner_sitedf['Data'] = pd.to_datetime(param_filtered[date_col])
                             owner_sitedf[site] = param_filtered[result_col]
                             owner_sitedf[unit_col] = param_filtered[unit_col]

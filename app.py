@@ -5,26 +5,34 @@ from src.app.utils.graphs import voluntariosplot, hydroplots
 
 
 if __name__ == "__main__":
+
+    
     # ASUP
-    df = pd.read_excel('estudos_vonluntarios_agua_superficial_revc.xlsx', sheet_name='Água Superficial')
+    # df = pd.read_excel('estudos_vonluntarios_agua_superficial_revc.xlsx', sheet_name='Água Superficial')
     # SED
-    # df = pd.read_excel('estudos_voluntarios_sedimento_REVC.xlsx', sheet_name='Sedimento')
+    df = pd.read_excel('estudos_voluntarios_sedimento_REVC.xlsx', sheet_name='Sedimento')
 
     # df = pd.read_excel('BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
     
     cols_volun = ['Empresa responsável', 'Local', 'Ponto', 'Data da coleta', 'Maré', 'Parâmetros', 'Resultado', 'Unidade', 'VMP', 'Legislação']
 
-    murucupi = ['Rio Murucupi', 'Pontos de amostragem proximos a Bacia do Rio Murucupi', 'Igarapé Murucupi - Braço Superior Oeste (Entre a Refinaria e o DRS-1)', 'Igarapé Murucupi - Unificação dos Braços', 'Rio Igarapé Murucupi']
+    # murucupi = ['Rio Murucupi', 'Pontos de amostragem proximos a Bacia do Rio Murucupi', 'Igarapé Murucupi - Braço Superior Oeste (Entre a Refinaria e o DRS-1)', 'Igarapé Murucupi - Unificação dos Braços', 'Rio Igarapé Murucupi']
+    murucupi = ['Rio Murucupi']
     
-    para = ['Rio Pará', 'Qualidade Hídrica - Rio Pará a Montante', 'Rio Pará e dos Efluentes da Alunorte', 'rio Pará a jusante', 'rio Pará a montante', 'Rio Pará - Litoral Sul - Oeste/Noroete da Refinaria', 'Rio Pará - Litoral Sul']
+    para = ['Rio Pará',]
+    # para = ['Rio Pará', 'Qualidade Hídrica - Rio Pará a Montante', 'Rio Pará e dos Efluentes da Alunorte', 'rio Pará a jusante', 'rio Pará a montante', 'Rio Pará - Litoral Sul - Oeste/Noroete da Refinaria', 'Rio Pará - Litoral Sul']
 
-    pramajo = ['Igarapé Pramajó  - Área Background, Fora da Influência das Operações Industriais da HYDRO ALUNORTE', 'Rio Igarapé Pramajó']
+    pramajo = ['Igarapé Pramajó',]
+    # pramajo = ['Igarapé Pramajó', 'Igarapé Pramajó  - Área Background, Fora da Influência das Operações Industriais da HYDRO ALUNORTE', 'Rio Igarapé Pramajó']
 
-    pramajozinho = ['Igarapé Pramajozinho', 'Igarapé Pramajozinho - Sul do DRS-1', 'Igarapés  Pramajozinho - Sul do DRS-1', 'Igarapé Pramajozinho']
+    pramajozinho = ['Igarapé Pramajozinho',]
+    # pramajozinho = ['Igarapé Pramajozinho', 'Igarapé Pramajozinho - Sul do DRS-1', 'Igarapés  Pramajozinho - Sul do DRS-1', 'Igarapé Pramajozinho']
 
-    taua = ['Igarapé Tauá', 'Igarapé Tauá - Braço Superior Sul - Área Background, Fora da Influência das Operações Industriais da HYDRO ALUNORTE', 'Igarapé Tauá - Unificação dos Braços - Sudeste do DRS-2', 'Igarapé Tauá - Braço Sul - Área Background', 'Igarapé Tauá - Braço Norte - Sul do DRS-2', 'Rio  Igarapé Tauá', 'Igarapé Tauá (próximo a foz)', 'Igarapé Tauá (a jusante do Pramajó)']
+    taua = ['Igarapé Tauá',]
+    # taua = ['Igarapé Tauá', 'Igarapé Tauá - Braço Superior Sul - Área Background, Fora da Influência das Operações Industriais da HYDRO ALUNORTE', 'Igarapé Tauá - Unificação dos Braços - Sudeste do DRS-2', 'Igarapé Tauá - Braço Sul - Área Background', 'Igarapé Tauá - Braço Norte - Sul do DRS-2', 'Rio  Igarapé Tauá', 'Igarapé Tauá (próximo a foz)', 'Igarapé Tauá (a jusante do Pramajó)']
 
-    aguaverde = ['Igarapé Água Verde - Norte do DRS-2', 'Rio Igarapé Água Verde']
+    aguaverde = ['Igarapé Água Verde',]
+    # aguaverde = ['Igarapé Água Verde', 'Igarapé Água Verde - Norte do DRS-2', 'Rio Igarapé Água Verde']
     
     # barcarena = ['Rio Barcarena até Furo do Arrozal', 'Rio Barcarena', 'Ponto rio  Barcarena', 'Barcarena']
 
@@ -42,27 +50,50 @@ if __name__ == "__main__":
     # rivername = 'murucupi'
 
    
-    positions = {'taua': 'upper right', 'murucupi': 'best', 'pramajo': 'upper right', 'pramajozinho': 'upper right', 'aguaverde': 'upper right', 'para': 'upper left'}
+    positions = {'taua': 'best', 'murucupi': 'best', 'pramajo': 'best', 'pramajozinho': 'best', 'aguaverde': 'best', 'para': 'best'}
    
     
     figtitles = ['Rio Murucupi', 'Rio Pará', 'Igarapé Tauá', 'Igarapé Pramajó', 'Igarapé Pramajozinho', 'Igarapé Água Verde']
-    sed_risk_params = {'risk13': ('Alumínio', 'Ferro')}
-    sup_risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio', 'Sódio Total', 'pH'), 'risk13': ('Alumínio dissolvido', 'Ferro dissolvido', 'Sólidos dissolvidos totais')}
+    
+    sed_risk_params = {'risk13': ('Alumínio', 'Ferro'), 'risk07': ('Arsênio', 'Alumínio', 'Ferro', 'Cromo', 'Chumbo', 'Fósforo', 'Bário', 'Vanádio', 'Silício', 'Cobalto', 'Mercúrio', 'Manganês', 'Sódio', 'Sulfato', 'Zinco')}
+    
+    sup_risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio total', 'pH'), 'risk13': ('Alumínio dissolvido', 'Ferro dissolvido', 'Sólidos dissolvidos totais'), 'risk07': ('Sólidos dissolvidos totais', 'Coliformes Termotolerantes', 'pH', 'DBO', 'OD', 'Óleos e Graxas', 'Fósforo total', 'Bário total', 'Cromo total', 'Vanádio total', 'Zinco total', 'Arsênio total', 'Manganês total', 'Chumbo total', 'Ferro dissolvido', 'Alumínio dissolvido', 'Mercúrio total', 'Sódio total', 'Sulfato total')} # 'Sílica total'
 
-    sup_baseline = {'risk13': {'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sólidos dissolvidos totais': 123}}
-    sed_baseline = {'risk13': {'Alumínio': 20217, 'Ferro': 67240}}
-    rivers = ['murucupi', 'para', 'taua', 'pramajo', 'pramajozinho', 'aguaverde']
+    sup_baseline = {'risk13': {'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sólidos dissolvidos totais': 123}, 'risk17': {'Sulfato': 3.09, 'Sódio total': 4.9, 'pH': 5.22}, 'risk12': {'Fósforo Total': 0.06, 'Sulfato': 3.09}, 'risk07': {'Sólidos dissolvidos totais': 123, 'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sulfato total': 3.09, 'Sódio total': 4.9, 'pH': 5.22, 'Coliformes Termotolerantes': 160, 'DBO': 3.44, 'OD': 4.31, 'Óleos e Graxas': 0.0, 'Fósforo total': 0.06, 'Bário total': 0.04, 'Vanádio total': 0.01, 'Zinco total': 0.08, 'Arsênio total': 0.066, 'Manganês total': 0.09, 'Chumbo total': 0.02, 'Mercúrio total': 0.0002, 'Cromo total': 0.01}}
+    
+    sed_baseline = {'risk13': {'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 67240, 'med': 6894}}, 'risk07': {'Arsênio': {'max': 13.6, 'med': 1.39}, 'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 67240, 'med': 7488}, 'Chumbo': {'max': 7.85, 'med': 3.06}, 'Fósforo': {'max': 313, 'med': 55}, 'Bário': {'max': 69.8, 'med': 5.75}, 'Vanádio': {'max': 256, 'med': 18.2}, 'Mercúrio': {'max': 0.08, 'med': 0.0242}, 'Manganês': {'max': 1796, 'med': 58.5}, 'Sódio': {'max': 126, 'med': 73.7}, 'Sulfato': {'max': 6.650, 'med': 2.37}, 'Zinco': {'max': 27.1, 'med': 9.15}, 'Cromo': {'max':138, 'med': 9.98}, 'Cobalto': {'max':3.84, 'med': 1.63}, 'Sílica': {'max':8.7, 'med': 4.37}}}
+    
+    # rivers = ['murucupi', 'para', 'taua', 'pramajo', 'pramajozinho', 'aguaverde']
+    rivers = ['murucupi',]
     owners = ['Geoklock', 'Enviro-Tec', 'SGW']
-    risk_title = 'RISCO_13'
-    mode = 'sup'
-    sup_risk = sup_risk_params['risk13']
-    sed_risk = sed_risk_params['risk13']
+    risk_title = 'RISCO_07'
+    # risk_title = 'TESTE'
+    mode = 'sed'
+    sup_risk = sup_risk_params['risk07']
+    
+    sed_risk = sed_risk_params['risk07']
+    
+    
+        
+    # for j in range(len(owners)):
+
+    # str_filter_dict = {'param': ('Parâmetros', sup_risk), 'site': ('Local', figtitles), 'owner': ('Empresa responsável', ('Enviro-Tec',))}
+
+    # val_filter_dict = {'Resultado': ('positive', 'nan')}
+
+    # ts_df = estudosvolun(risk_title, 'resume', df, cols_volun, str_filter_dict, allrivers, owners, mode, val_filters=val_filter_dict, ts=ts_dict)
+    # # print(ts_df['overallmax'])
+    # # print(ts_df['ownermax'])
+    # if len(ts_df['dataframes']) > 0:
+    #     voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], 'águas superficiais', risk_title, sup_baseline['risk17'], mode, 'best')
+    
+    
     
     for i in range(len(rivers)):
         
         for j in range(len(owners)):
 
-            str_filter_dict = {'param': ('Parâmetros', sup_risk), 'site': ('Local', rivers_name[rivers[i]]), 'owner': ('Empresa responsável', (owners[j],))}
+            str_filter_dict = {'param': ('Parâmetros', sed_risk), 'site': ('Local', rivers_name[rivers[i]]), 'owner': ('Empresa responsável', (owners[j],))}
 
             val_filter_dict = {'Resultado': ('positive', 'nan')}
         
@@ -70,7 +101,7 @@ if __name__ == "__main__":
             # print(ts_df['overallmax'])
             # print(ts_df['ownermax'])
             if len(ts_df['dataframes']) > 0:
-                voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], figtitles[i], risk_title, sup_baseline['risk13'], mode, positions[rivers[i]])
+                voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], figtitles[i], risk_title, sed_baseline['risk07'], mode, positions[rivers[i]])
    
 
     # cols_hydro = ['Código do ponto', 'Local', 'Data Coleta', 'Parâmetro', 'Valor', 'Unidade', 'VMP']
@@ -81,4 +112,4 @@ if __name__ == "__main__":
 
     # dfs = hydroalunorte(risk_title, df, cols_hydro, str_filter_dict, mode, val_filters=val_filter_dict, ts=ts_dict)
 
-    # hydroplots(dfs['dataframes']['perparam'], dfs['overallmax'], 'monit_cont', 'monitoramento contínuo', risk_title, sup_baseline['risk13'], mode, 'best')
+    # hydroplots(dfs['dataframes']['perparam'], dfs['overallmax'], 'monit_cont', 'monitoramento contínuo', risk_title, sup_baseline['risk07'], mode, 'best')
