@@ -3,21 +3,15 @@ import numpy as np
 
 def removerepeateddates(df, date_col, result_col=None, param=None):
  
-    # print('DF', df)
     dfc = df
     dfc = dfc.sort_values(by=date_col, ascending=True)
     dfc = dfc.reset_index(drop=True)
     cols = df.columns.tolist()
-    # print(cols)
     avg_cols = cols[1: len(cols) - 2]
-    # print(avg_cols)
-    # asd
-    # print('AVG COLS', avg_cols)
     if len(dfc) >= 2:
       
         todrop = []
         for i in range(len(dfc) - 1):
-            # print(dfc)
             year1 = dfc.loc[i, date_col].year
             month1 = dfc.loc[i, date_col].month
             if len(str(month1)) == 1:
@@ -39,7 +33,6 @@ def removerepeateddates(df, date_col, result_col=None, param=None):
             if date_next == date_before:
                 if result_col != None:
                     rowsmax = dfc.loc[i: i + 1, result_col]
-                    # print('XCBXC', rowsavg)
                     avg = rowsmax.max()
                     dfc.loc[i + 1, result_col] = avg
                 else:
@@ -51,7 +44,6 @@ def removerepeateddates(df, date_col, result_col=None, param=None):
         if param == 'month':
            
             for i in range(len(dfc) - 1):
-                # print(dfc)
                 year1 = dfc.loc[i, date_col].year
                 month1 = dfc.loc[i, date_col].month
                 if len(str(month1)) == 1:
@@ -73,13 +65,11 @@ def removerepeateddates(df, date_col, result_col=None, param=None):
                 if date_next == date_before:
                     if result_col != None:
                         rowsmax = dfc.loc[i: i + 1, result_col]
-                        # print('XCBXC', rowsavg)
                         avg = rowsmax.max()
                         dfc.loc[i + 1, result_col] = avg
                     else:
                         rowsmax = dfc.loc[i: i + 1, avg_cols]
                         avg = rowsmax.max()
-                        # print(avg)
                         dfc.loc[i + 1, avg_cols] = avg
 
                     todrop.append(i)
@@ -91,6 +81,7 @@ def removerepeateddates(df, date_col, result_col=None, param=None):
                         dfc = dfc.drop(idx)
     return dfc
 
+
 def mergedfs(dfs, cols):
     mergeddf = pd.DataFrame(columns=cols)
     for df in dfs:
@@ -98,17 +89,5 @@ def mergedfs(dfs, cols):
         df1 = removerepeateddates(df, 'Data', df_cols[1], df_cols[1])
         mergeddf = mergeddf.merge(df1, how='outer', on=cols)
     mergeddf.to_excel('dataframes\challenge.xlsx')
-    # print(mergeddf)
+
     return mergeddf
-   
-# if __name__ == "__main__":
-
-#     df1 = pd.read_excel('dataframes\RISCO_12\RISCO_12_monit_cont.xlsx', sheet_name='RMCC')
-#     df2 = pd.read_excel('dataframes\RISCO_12\RISCO_12_monit_cont.xlsx', sheet_name='RMEC')
-#     df3 = pd.read_excel('dataframes\RISCO_12\RISCO_12_monit_cont.xlsx', sheet_name='RMN')
-#     # removerepeateddates(df, 'Data', 'RMCC')
-#     mergedfs([df1, df2], ['Data'])
-
-#     date1 = np.datetime64('2017-08-07')
-#     date2 = np.datetime64('2017-08-07')
-#     print(date1 == date2)

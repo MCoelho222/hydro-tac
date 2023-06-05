@@ -4,18 +4,12 @@ import matplotlib as mpl
 import matplotlib.dates as mdates
 from src.app.utils import replace_as_lastcols
 import numpy as np
-# from src.app.utils import sort_bes
-# import matplotlib as mpl
-# mpl.rc('image', cmap='gray')
-
 
 mpl.rcParams['axes.linewidth'] = 0.5
 
+
 def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_position):
-    # if mode == 'sed':
-    #     overallmax['Alumínio'] = 120000
     if len(df) == 0:
-        print('hdhfkfngkjnbgbgb')
         return {'error': 'empty dataframe'}
     owners = list(df.keys())
     name = ''
@@ -30,7 +24,7 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
                 allparams.add(params[j])
     
     all_tides = df[name].keys()
-    list_all_tides = list(all_tides)
+    list_all_tides = list(all_tides)[::-1]
     markers = ['o', '^', '*']
     colors= ['tab:orange', 'gray', 'k', 'r', 'brown', 'lime', 'blue', 'm', 'c', 'deeppink', 'y']
     marker = {}
@@ -52,9 +46,6 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
             ax.axhline(baseline[param]['med'],  label='Baseline/background (mediana)', linewidth=1., linestyle='dashed', color='b')
         if mode == 'sup':
             try:
-                # if param != 'pH':
-                #     ax.axhline(baseline[param],  label='Baseline/background (max)', linewidth=1., linestyle='dashed', color='k')
-                # else:
                 ax.axhline(baseline[param],  label='Baseline/background (max)', linewidth=0.5, linestyle='dashed', color='k')
             except KeyError:
                 pass
@@ -88,21 +79,15 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
                     if len(tomax) > 0:
                         try:
                             maxval = tomax.max()
-                            # print('MAX', maxval)
                         except:
-                            # print('ERRO')
                             continue
                         
                         colmax.append(maxval)
                 colmax2 = np.array(colmax)
-                # print(colmax)
-                # print(colmax2)
                 maxmax = np.max(colmax2)
 
-                # paramdf_cols = list(paramdf.columns)
                 pop_ind = paramdf_cols.index('VMP')
                 paramdf_cols.pop(pop_ind)
-                # paramdf['EPA-RSL'] = paramdf.loc[:, 'VMP']
                 paramdf = paramdf[paramdf_cols] 
                 cols2 = paramdf.columns.tolist()
                 unit = cols2.pop()
@@ -111,7 +96,6 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
                 xlabels = cols2[1:]
                 for i in range(len(xlabels)):
                     xxlabels.add(xlabels[i])
-                # dff = paramdf[cols2].sort_values(by='Data', ascending=True)
                 for i in range(len(paramdf)):
                     
                     ax.scatter(cols2[1:], paramdf.loc[i, cols2[1:]], marker=marker[tide], s=30,  label=f"{paramdf.loc[i, 'Data'].day}-{paramdf.loc[i, 'Data'].month}-{paramdf.loc[i, 'Data'].year} {tide}", color=colors[i]) 
@@ -124,9 +108,9 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
                     label = 'CONAMA 420/2009'
                 if name == 'SGW':
                     label = 'CONAMA 454/2012'
+                ax.axhline(vmp_col.loc[0],  label=label, linewidth=1., linestyle='dashed', color='r')
             else:
                 label = 'VMP'
-                # if mode == 'sup':
                 ax.axhline(vmp_col.loc[0],  label=label, linewidth=1., linestyle='dashed', color='r')
 
         except:
@@ -140,13 +124,11 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
                     pass
             pass
         
-        plt.title(f'{param} - {rivername.title()} ({name.upper()})', fontsize=9)
+        plt.title(f'{param} - {rivername.title()}', fontsize=9)
         plt.xlabel('Pontos', fontsize=9)
         plt.ylabel(ylabel, fontsize=9)
       
-        # plt.xticks(fontsize=9)
-        # plt.yticks(fontsize=9)
-     
+
         if len(xxlabels) > 3:
             for x in xlabels:
                 try:
@@ -161,12 +143,15 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
         if mode == 'sed':
             toptop = baseline[param]['max']
         else:
-            toptop = baseline[param]
+            try:
+                toptop = baseline[param]
+            except KeyError:
+                toptop = 0
 
         if toptop > maxmax and toptop > overallmax[param]:
             plt.ylim(0., toptop * 1.0500)
         else:
-            if overallmax[param] > maxmax:
+            if overallmax[param] > maxmax and param != 'Sólidos dissolvidos totais':
                 plt.ylim(0., overallmax[param] * 1.0500)
             else:
                 try:
@@ -177,54 +162,30 @@ def voluntariosplot(df, overallmax, rivername, risco, baseline, mode, leg_positi
                 except:
                     plt.ylim(0., maxmax * 1.0500)
 
-        # try:
-        #     if param != 'pH' and param != 'Sólidos dissolvidos totais':
-        #         if overallmax[param] > vmp:
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        #     if param == 'pH':
-        #         ph = vmp_col.loc[0].split(' ')[-1]
-        #         if overallmax[param] > int(ph):
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        #         else:
-        #             try:
-        #                 plt.ylim(0., int(ph) * 1.05)
-        #             except:
-        #                 pass
-
-        # except TypeError:
-        #     plt.ylim(0., overallmax[param] * 1.05)
-        # if mode == 'sed' and param == 'Alumínio':
-        #     plt.ylim(0, 50000)
-        # if mode == 'sed' and param == 'Ferro':
-        #     plt.ylim(0, 70000)
-        
         ax.tick_params(axis='both', which='major', labelsize=8)
         handles, labels = ax.get_legend_handles_labels()
         # sort both labels and handles by labels
         labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-        leg = ax.legend(handles, labels, fontsize=6, loc=leg_position, framealpha=0.4, ncol=2)
-        leg.get_frame().set_linewidth(0.0)
-        # ax.legend(loc='best', fontsize=7, frameon=False)
+        leg = ax.legend(handles, labels, fontsize=7, loc=leg_position, framealpha=0.4, ncol=2)
+        leg.get_frame().set_linewidth(1.0)
         plt.tight_layout()
         plt.savefig(f'graphs\{risco}\{name}\{mode.upper()}_{param}_{rivername}_{name}.svg')
         plt.show()
     
     return allparams
 
-def hydroplots(df, overallmax, figfilename, figtitle, risco, baseline, mode, leg_position):
+
+def hydroplots(df, overallmax, figfilename, figtitle, risco, baseline, mode, graphtype=None, leg_position=None):
   
     if len(df) == 0:
         return {'error': 'empty dataframe'}
-    # overallmax['Fósforo Total'] = 0.5
     for param in df.keys():
        
         paramdf = df[param]
         if param != 'pH':
             paramdf['VMP'] = pd.to_numeric(paramdf['VMP'], errors='coerce')
         vmp_col = paramdf['VMP']
-        # print(vmp_col)
         vmp = vmp_col.max()
-        # vmp = vmp_col.max()
         if vmp == '6 a 9' or vmp =='6.0 a 9.0':
             vmp = int(vmp.split(' ')[-1])
         paramdf_cols = list(paramdf.columns)
@@ -237,15 +198,11 @@ def hydroplots(df, overallmax, figfilename, figtitle, risco, baseline, mode, leg
             if len(tomax) > 0:
                 try:
                     maxval = tomax.max()
-                    # print('MAX', maxval)
                 except:
-                    # print('ERRO')
                     continue
                 
                 colmax.append(maxval)
         colmax2 = np.array(colmax)
-        # print(colmax)
-        # print(colmax2)
         maxmax = np.max(colmax2)
         paramdf = replace_as_lastcols(paramdf, ('VMP', 'Unidade'))  
         paramdf_cols = list(paramdf.columns)
@@ -258,29 +215,27 @@ def hydroplots(df, overallmax, figfilename, figtitle, risco, baseline, mode, leg
         ylabel = paramdf[unit].loc[0]
         
         ts = cols2[1:]
-        # dff = paramdf[cols2].sort_values(by='Data', ascending=True)
-        
+        ordered = []
+        order = ['RMN', 'RMEC', 'RMCC', 'IT', 'IPJ', 'IAV']
+        for i in range(len(order)):
+            if order[i] in ts:
+                ordered.append(order[i])
+        data = []
+        for i in range(len(ordered)):
+            colvalue = paramdf[ordered[i]]
+            colvalue = colvalue.dropna()
+            values = colvalue.values.tolist()
+            data.append(values)
         figsize = (7, 4)
         fig, ax = plt.subplots(figsize=figsize)
         plt.grid(axis = 'y', linewidth=0.1)
         colors= ['goldenrod', 'gold', 'k', 'chocolate', 'darkorange', 'orangered', 'dimgray', 'darkgray', 'lightgray', 'royalblue', 'cornflowerblue', 'deepskyblue']
-        # , 'tab:orange', 'gray', 'k', 'r', 'brown', 'burlywood', 'blue', 'm', 'c', 'deeppink', 'y']
-        # sizes = [32, 30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8]
-        # colors = colors[::-1]
-        # for ts in ts_names:
-        for i in range(len(ts)):
+        if graphtype == 'boxplot':
+            ax.boxplot(data, labels=ordered)
+        else:
+            for i in range(len(ts)):
 
-            ax.scatter(paramdf[cols2[0]], paramdf[ts[i]], s=31, label=ts[i], color=colors[i])
-        # if param == 'pH':
-        #     try:
-        #         print(vmp_col.loc[0])
-        #         inflim = float(vmp_col.loc[0].split(' ')[0])
-        #         supflim = float(vmp_col.loc[0].split(' ')[-1])
-        #         ax.axhline(inflim,  label='VMP', linewidth=1., color='r')
-        #         ax.axhline(supflim, linewidth=1., color='r')
-        #     except:
-        #         print('FERROU')
-        #         pass
+                ax.scatter(paramdf[cols2[0]], paramdf[ts[i]], s=31, label=ts[i], color=colors[i])
         try:
             vmp_col.loc[0] > 0
             if param != 'pH' and param != 'Sódio total' and param != 'Sílica total':
@@ -288,13 +243,11 @@ def hydroplots(df, overallmax, figfilename, figtitle, risco, baseline, mode, leg
         except:
             if param == 'pH':
                 try:
-                    # print(vmp_col.loc[0])
                     inflim = float(vmp_col.loc[0].split(' ')[0])
                     supflim = float(vmp_col.loc[0].split(' ')[-1])
                     ax.axhline(inflim,  label='VMP', linewidth=1., color='r', linestyle='dashed')
                     ax.axhline(supflim, linewidth=1., color='r', linestyle='dashed')
                 except:
-                    # print('FERROU')
                     pass
             pass
         try:
@@ -304,35 +257,15 @@ def hydroplots(df, overallmax, figfilename, figtitle, risco, baseline, mode, leg
         
         
         plt.title(f'{param} - {figtitle.title()}', fontsize=9)
-        plt.xlabel('Data', fontsize=10)
+        if graphtype == 'boxplot':
+            plt.xlabel('Pontos', fontsize=10)
+        else:
+            plt.xlabel('Data', fontsize=10)
         plt.ylabel(ylabel, fontsize=10)
       
-        # plt.xticks(fontsize=9)
-        # plt.yticks(fontsize=9)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%Y"))
-        fig.autofmt_xdate()
-              
-        # try:
-        #     if param != 'pH':
-        #         if overallmax[param] > vmp:
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        #     if param == 'pH':
-        #         # print(ph)
-        #         ph = vmp_col.loc[0].split(' ')[-1]
-        #         if overallmax[param] > int(ph):
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        #         else:
-        #             try:
-        #                 plt.ylim(0., int(ph) * 1.05)
-        #             except:
-        #                 pass
-        # except TypeError:
-        #     plt.ylim(0., overallmax[param] * 1.05)
-
-        # if param == 'Alumínio dissolvido':
-        #     plt.ylim(0., 4. * 1.05)
-        # if param == 'Ferro dissolvido':
-        #     plt.ylim(0., 7.5)
+        if graphtype != 'boxplot':
+            ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%Y"))
+            fig.autofmt_xdate()
 
         if mode == 'sed':
             toptop = baseline[param]['max']
@@ -372,25 +305,25 @@ def hydroplots(df, overallmax, figfilename, figtitle, risco, baseline, mode, leg
         
         # sort both labels and handles by labels
         labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-        leg = ax.legend(handles, labels, fontsize=6, loc=leg_position, framealpha=0.4, ncol=3)
-        leg.get_frame().set_linewidth(0.0)
+        leg = ax.legend(handles, labels, fontsize=7, loc=leg_position, framealpha=0.4, ncol=3)
+        leg.get_frame().set_linewidth(1.0)
         
-        # ax.legend(loc='best', fontsize=7, frameon=False)
         plt.tight_layout()
-        plt.savefig(f'graphs\{risco}\Hydro\{mode.upper()}_{param}_{figfilename}.svg', dpi=1200)
+
+        if graphtype == 'boxplot':
+            plt.savefig(f'graphs\{risco}\Hydro\{graphtype}_{mode.upper()}_{param}_{figfilename}.svg', dpi=1200)
+        else:
+            plt.savefig(f'graphs\{risco}\Hydro\{mode.upper()}_{param}_{figfilename}.svg', dpi=1200)
         plt.show()
        
     return
     
 def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=None):
-    # overallmax['Fósforo total'] = 0.5
     if len(df) == 0:
         print('hdhfkfngkjnbgbgb')
         return {'error': 'empty dataframe'}
 
     tides = list(df.keys())
-    # ind = tides.index('sem_mare')
-    # tides.pop(ind)
     allparams = set([])
     for tide in tides:
        
@@ -399,10 +332,8 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
             allparams.add(params[j])
     
     markers = ['o', '^', '*', 's', 'D', 'v', 'X', 'h', 'p', 'x']
-    # colors= ['tab:orange', 'gray', 'k', 'r', 'brown', 'lime', 'blue', 'm', 'c', 'deeppink', 'y']
     marker = {}
     for i in range(len(tides)):
-        # print(len(tides), len(markers))
         marker[tides[i]] = markers[i]
     
     for param in allparams:
@@ -426,8 +357,6 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
                 
             if len(paramdf) > 0:
                 
-                # paramdf = replace_as_lastcols(paramdf, ('VMP', 'Unidade'))
-                
                 vmp_col = paramdf['VMP']
                 vmp = vmp_col.max()
                 if vmp == '6 a 9' or vmp =='6.0 a 9.0':
@@ -442,15 +371,11 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
                     if len(tomax) > 0:
                         try:
                             maxval = tomax.max()
-                            # print('MAX', maxval)
                         except:
-                            # print('ERRO')
                             continue
                         
                         colmax.append(maxval)
                 colmax2 = np.array(colmax)
-                # print(colmax)
-                # print(colmax2)
                 maxmax = np.max(colmax2)
 
                 pop_ind = paramdf_cols.index('VMP')
@@ -463,23 +388,15 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
                 
                 xlabels = cols2[1:]
                 allxlabels.append(xlabels)
-                # dff = paramdf[cols2].sort_values(by='Data', ascending=True)
                 for i in range(len(paramdf)):
-                    # if tide == 'mare_alta':
-                    #     color = 'tab:orange'
-                    # if tide == 'mare_vazante':
-                    #     color = 'gray'
-                    # ax.scatter(cols2[1:], paramdf.loc[i, cols2[1:]], marker=marker[tide], s=30, color=color)
-                    # if i == len(paramdf) - 1:
-                        # ax.scatter(cols2[1:], paramdf.loc[i, cols2[1:]], marker=marker[tide], s=30, label=tide, color=color)
-
                     ax.scatter(cols2[1:], paramdf.loc[i, cols2[1:]], marker=marker[tide], s=30,  label=f"{paramdf.loc[i, 'Data'].month}-{paramdf.loc[i, 'Data'].year} {tide}") 
         
-                # print('HEYHEYEHEYEHEY')
-        # sortedpoints = sort_bespts(allxlabels)
         try:
             vmp_col.loc[0] > 0
-            ax.axhline(vmp_col.loc[0],  label='VMP', linewidth=1., linestyle='dashed', color='r')
+            if mode == 'sed':
+                ax.axhline(vmp_col.loc[0],  label='CONAMA 454/2012', linewidth=1., linestyle='dashed', color='r')
+            else:
+                ax.axhline(vmp_col.loc[0],  label='VMP', linewidth=1., linestyle='dashed', color='r')
         except:
             if param == 'pH':
                 try:
@@ -501,9 +418,6 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
         plt.title(f'{param} - {figtitle}', fontsize=9)
         plt.xlabel('Pontos', fontsize=10)
         plt.ylabel(ylabel, fontsize=10)
-        # y0, ymax = plt.ylim()
-        # print(param)
-        # print(ymax)
         y0, ymax = plt.ylim()
         if ymax > maxmax and ymax > overallmax[param]:
             ywidth = ymax - 0.0000
@@ -517,8 +431,6 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
         print('ywidth', ywidth)
         print('MAXMAX', maxmax)
         print('YLOC', yloc)
-        # if param == 'Sólidos dissolvidos totais':
-            # yloc = ywidth * 0.5
 
         lcolor = 'grey'
         
@@ -538,19 +450,6 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
         if len(xlabels) > 10:
             plt.xticks(rotation=90)
         
-        # try:
-        #     if param != 'pH':
-        #         if overallmax[param] > vmp:
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        #     if param == 'pH':
-        #         ph = vmp_col.loc[0].split(' ')[-1]
-        #         if overallmax[param] > int(ph):
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        # except TypeError:
-        #     plt.ylim(0., overallmax[param] * 1.05)
-       
-        # if param == 'Ferro dissolvido':
-        #     plt.ylim(0., 7.5)
         if mode == 'sed':
             toptop = baseline[param]['max']
         else:
@@ -575,11 +474,8 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
         # sort both labels and handles by labels
 
         labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-        # asd
         leg = ax.legend(handles, labels, fontsize=6, framealpha=0.4, ncol=3, loc='best')
-        leg.get_frame().set_linewidth(0.0)
-        # ax.legend(loc='best', fontsize=7, frameon=False)
-        # plt.tight_layout(rect=(0, 0.1, 1, 1))
+        leg.get_frame().set_linewidth(1.0)
         plt.tight_layout()
         plt.savefig(f'graphs\{risco}\Arcadis\{mode.upper()}_{param}_BES_mares.svg')
         plt.show()
@@ -588,8 +484,7 @@ def besplotmare(df, overallmax, figtitle, baseline, mode, risco, leg_position=No
 
 
 def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_position=None):
-    # overallmax['Fósforo total'] = 0.5
-    
+
     if len(df) == 0:
         return {'error': 'empty dataframe'}
     
@@ -603,7 +498,6 @@ def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_positio
             figsize = (9, 4.5)
         else:
             figsize = (11, 5.5)
-        # fig, ax = plt.subplots()
         fig, ax = plt.subplots(figsize=figsize)
         plt.grid(axis = 'y', linewidth=0.1)
 
@@ -626,15 +520,11 @@ def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_positio
             if len(tomax) > 0:
                 try:
                     maxval = tomax.max()
-                    # print('MAX', maxval)
                 except:
-                    # print('ERRO')
                     continue
                 
                 colmax.append(maxval)
         colmax2 = np.array(colmax)
-        # print(colmax)
-        # print(colmax2)
         maxmax = np.max(colmax2)
         
         pop_ind = paramdf_cols.index('VMP')
@@ -642,7 +532,6 @@ def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_positio
         paramdf = paramdf[paramdf_cols] 
         cols2 = paramdf.columns.tolist()
         unit = cols2.pop()
-        # print(unit)
         ylabel = paramdf[unit].loc[0]
         xlabels = cols2[1:]
         for i in range(len(paramdf)):
@@ -684,8 +573,6 @@ def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_positio
                 ywidth = overallmax[param] - 0.0000
             else:
                 ywidth = maxmax - 0.000
-        # print('YWIDTH', ywidth)
-        # print('MAXMAX', maxmax)
         yloc = ywidth*0.70
         yloc2 = ywidth*0.40
         yloc3 = ywidth*0.30
@@ -751,29 +638,8 @@ def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_positio
             plt.axvline(4, 0, 1, color=lcolor, linewidth=0.5)
             plt.axvline(5, 0, 1, color=lcolor, linewidth=0.5)
 
-        # plt.xticks(fontsize=9)
-        # plt.yticks(fontsize=9)
-            
         if len(xlabels) > 10:
             plt.xticks(rotation=90)
-        # try:
-        #     if param != 'pH':
-        #         if maxmax > vmp:
-        #             plt.ylim(0., maxmax * 1.05)
-        #         else:
-        #             plt.ylim(0., vmp * 1.05)
-        #     if param == 'pH':
-        #         ph = vmp_col.loc[0].split(' ')[-1]
-        #         if overallmax[param] > float(ph):
-        #             print('HEYHEYHEY')
-        #             plt.ylim(0., overallmax[param] * 1.1)
-        #         else:
-        #             try:
-        #                 plt.ylim(0., float(ph) * 1.05)
-        #             except:
-        #                 pass
-        # except TypeError:
-        #     plt.ylim(0., overallmax[param] * 1.05)
         if overallmax[param] > maxmax:
             plt.ylim(0., overallmax[param] * 1.0500)
         else:
@@ -784,20 +650,15 @@ def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_positio
                     plt.ylim(0., vmp * 1.0500)
             except:
                 plt.ylim(0., maxmax * 1.0500)
-        # if param == 'Ferro dissolvido':
-        #     plt.ylim(0., 7.5)
         ax.tick_params(axis='both', which='major', labelsize=8)
         handles, labels = ax.get_legend_handles_labels()
         # sort both labels and handles by labels
         labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
         leg = ax.legend(handles, labels, fontsize=6, framealpha=0.4,
                          loc='best', ncol=3)
-        leg.get_frame().set_linewidth(0.0)
-        # ax.legend(loc='best', fontsize=7, frameon=False)
-        # ax.set_xticklabels(xlabels, fontsize=8)
+        leg.get_frame().set_linewidth(1.0)
         
         plt.tight_layout()
-        # plt.tight_layout(rect=(0, 0.1, 1, 1))
         if mode == 'eflu':
             plt.savefig(f'graphs\{risco}\{mode.upper()}_{param}_BES.svg')
         else:
@@ -805,8 +666,7 @@ def besplotall(df, overallmax, figtitle, mode, risco, baseline=None, leg_positio
         plt.show()
     
     return
-def efluplot(df, figtitle, mode, risco, owner=None, leg_position=None):
-    # overallmax['Fósforo total'] = 0.5
+def efluplot(df, figtitle, mode, risco, graphtype=None, owner=None, leg_position=None):
     
     if len(df) == 0:
         return {'error': 'empty dataframe'}
@@ -814,34 +674,37 @@ def efluplot(df, figtitle, mode, risco, owner=None, leg_position=None):
     params = list(df.keys())
    
     for param in params:
-        # print(param)
         ylabel = ''
         xlabels = []
         figsize = (6.6, 3.3)
-        # fig, ax = plt.subplots()
         fig, ax = plt.subplots(figsize=figsize)
         plt.grid(axis = 'y', linewidth=0.1)
 
         paramdf = df[param]
-        # maxval = paramdf.max()
-        # print(maxval)
         vmp_col = paramdf['VMP']
-        # vmp = vmp_col.max()
         paramdf_cols = list(paramdf.columns)
         pop_ind = paramdf_cols.index('VMP')
         paramdf_cols.pop(pop_ind)
         paramdf = paramdf[paramdf_cols] 
         cols2 = paramdf.columns.tolist()
         unit = cols2.pop()
-        # print(unit)
         ylabel = paramdf[unit].loc[0]
         
         xlabels = cols2[1:]
-        # maxval = paramdf[xlabels].max()
+        data = []
+        for i in range(len(xlabels)):
+            colvalue = paramdf[xlabels[i]]
+            colvalue = colvalue.dropna()
+            values = colvalue.values.tolist()
+            print(values)
+            data.append(values)
         colors = ['tab:orange', 'gray', 'k', 'brown']
         if owner == 'hydro':
-            for i in range(len(xlabels)):
-                ax.scatter(paramdf[cols2[0]], paramdf[xlabels[i]], s=30, label=xlabels[i], color=colors[i])
+            if graphtype == 'boxplot':
+                ax.boxplot(data, labels=xlabels)
+            else:
+                for i in range(len(xlabels)):
+                    ax.scatter(paramdf[cols2[0]], paramdf[xlabels[i]], s=30, label=xlabels[i], color=colors[i])
         else:
             for i in range(len(paramdf)):
                 
@@ -862,25 +725,15 @@ def efluplot(df, figtitle, mode, risco, owner=None, leg_position=None):
                     pass
             pass
         if owner == 'hydro':
-            ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%Y"))
-            fig.autofmt_xdate()
+            if graphtype != 'boxplot':
+                ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%Y"))
         y0, ymax = plt.ylim()
         plt.ylim(0., ymax * 1.05)
         if len(xlabels) > 10:
             plt.xticks(rotation=90)
-        # try:
-        #     if param != 'pH':
-        #         if overallmax[param] > vmp:
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        #     if param == 'pH':
-        #         ph = vmp_col.loc[0].split(' ')[-1]
-        #         if overallmax[param] > int(ph):
-        #             plt.ylim(0., overallmax[param] * 1.05)
-        # except TypeError:
-        #     plt.ylim(0., overallmax[param] * 1.05)
 
         plt.title(f'{param} - {figtitle}', fontsize=9)
-        if owner == 'hydro':
+        if owner == 'hydro' and graphtype != 'boxplot':
             plt.xlabel('Data', fontsize=10)
         else:
             plt.xlabel('Pontos', fontsize=10)
@@ -889,25 +742,28 @@ def efluplot(df, figtitle, mode, risco, owner=None, leg_position=None):
         if len(xlabels) > 10:
             plt.xticks(rotation=90)
        
-        ax.tick_params(axis='both', which='major', labelsize=8)
-        handles, labels = ax.get_legend_handles_labels()
-        # sort both labels and handles by labels
-        labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-        leg = ax.legend(handles, labels, fontsize=7, framealpha=0.4,
-                         loc='best', ncol=1)
+        ax.tick_params(axis='both', which='major', labelsize=6)
+        if graphtype != 'boxplot':
+            handles, labels = ax.get_legend_handles_labels()
+            # sort both labels and handles by labels
+            labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+            leg = ax.legend(handles, labels, fontsize=6, framealpha=0.4,
+                            loc=leg_position, ncol=1)
+        else:
+            leg = ax.legend(loc=leg_position, fontsize=6, framealpha=0.4,frameon=False, ncol=1)
         leg.get_frame().set_linewidth(0.0)
-        # ax.legend(loc='best', fontsize=7, frameon=False)
-        # ax.set_xticklabels(xlabels, fontsize=8)
         
         plt.tight_layout()
-        # plt.tight_layout(rect=(0, 0.1, 1, 1))
-        plt.savefig(f'graphs\{risco}\{mode.upper()}_{param}_{owner}.svg')
+        if graphtype != 'boxplot' and graphtype != None:
+            plt.savefig(f'graphs\{risco}\{graphtype}_{mode.upper()}_{param}_{owner}.svg')
+        else:
+            plt.savefig(f'graphs\{risco}\{mode.upper()}_{param}_{owner}.svg')
         plt.show()
     
     return
 
 
-            
+       
 
 
 

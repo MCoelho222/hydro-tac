@@ -31,7 +31,6 @@ def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None)
    
     if 'date' in ts:
         date_col = ts['date'][0]
-        # period = ts['date'][1] # tuple
 
     if val_filters:
         
@@ -66,7 +65,6 @@ def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None)
             pass
 
         if cell_param == 'pH' and cell_river in rivers:
-            # print('HEYEHEY')
             df_cols.loc[i, vmp_col] = '6 a 9'
             df_cols.loc[i, unit_col] = 'pH'
         if cell_param == 'Sulfato' and cell_river in rivers:
@@ -133,7 +131,6 @@ def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None)
                 continue
                         
             maxvalue = river_df[result_col].max()
-            # print('PASSEI')
             rivermaxvals[river] = maxvalue
             river_sites_df = pd.DataFrame(columns=['Data', unit_col, vmp_col])
             
@@ -168,7 +165,6 @@ def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None)
         allriversmaxvals[param] = rivermaxvals
         perriverdfs[param] = river_ts      
         param_ts[param] = param_tsdf
-        # print(param_tsdf)
         
     with pd.ExcelWriter(f'dataframes\{risco}\Hydro\{mode.upper()}_{risco}_monit_cont.xlsx') as writer1:
         for param in param_ts.keys():
@@ -186,7 +182,6 @@ def hydroalunorte(risco, df, cols, str_filters, mode, val_filters=None, ts=None)
         maxparam2 = np.array(maxparam)
         
         parammaxvals[param] = np.max(maxparam2)
-    # print(parammaxvals)    
 
 
     return {'dataframes': {'perparam':param_ts, 'perriver': perriverdfs}, 'maximos': allriversmaxvals, 'overallmax': parammaxvals} 
@@ -195,7 +190,7 @@ if __name__ == "__main__":
 
     from src.app.utils.graphs import hydroplots
 
-    df = pd.read_excel('BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
+    df = pd.read_excel('data/BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
 
     risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio total', 'pH')}
    

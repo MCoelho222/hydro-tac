@@ -20,7 +20,6 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
     ------------------------------------------------------------------------------------------------------"""
   
     df_cols = df.loc[:, cols]
-    # print(df_cols)
     param_col = str_filters['param'][0] 
     params = str_filters['param'][1] 
     tide_col = ts['tide'][0] 
@@ -36,7 +35,6 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
    
     if 'date' in ts:
         date_col = ts['date'][0]
-        # period = ts['date'][1] # tuple
 
     if val_filters:
         
@@ -61,7 +59,6 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
         cell_param = df_cols.loc[i, param_col]
         cell_site = df_cols.loc[i, site_col]
         # mu = '\u03BC'
-        # print(cell_unit)
         try:
             if cell_unit[1:] == 'g/L' and cell_unit[0] != 'm' and cell_unit[0] != 'k':
 
@@ -115,11 +112,8 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
                     df_new = pd.concat([df_new, filtered], axis=0, ignore_index=True)
                    
             df_cols = df_new.copy(deep=True)
-            # print(df_cols)
             if len(df_cols) == 0:
                 return {'dataframes': df_cols, 'empty_df_cause': val}
-    # print(overallmax)
-    # asd
     if not ts:
         return {'dataframes': df_cols}
         
@@ -143,8 +137,6 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
            
             if owner == 'Geoklock' or owner == 'Enviro-Tec' or owner == 'SGW':
                 ordered_sites = sort_str_endswithnum(unique_sites, '-')
-                # print(ordered_sites)
-                # asd
                 owners_sites[owner] = ordered_sites
              
     
@@ -178,9 +170,6 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
                     if site in tide_df[pt_col].values.tolist():
                         site_filtered = tide_df[tide_df[pt_col] == site]
         
-                        # if site_own == 'Enviro-Tec':
-                        #     site_filtered = site_filtered[site_filtered[sample_col] == 1]
-            
                         owner_sitedf = pd.DataFrame()
                      
                         param_filtered = site_filtered[site_filtered[param_col] == param]
@@ -188,10 +177,8 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
 
                         if len(param_filtered) >= 2:
                             param_filtered = removerepeateddates(param_filtered, date_col, result_col)
-                            # param_filtered = removerepeateddates(param_filtered, date_col, result_col)
                            
                         if len(param_filtered) > 0:
-                            print(param_filtered[date_col])
                             owner_sitedf['Data'] = pd.to_datetime(param_filtered[date_col])
                             owner_sitedf[site] = param_filtered[result_col]
                             owner_sitedf[unit_col] = param_filtered[unit_col]
@@ -203,7 +190,6 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
                 owner_tsdf = removerepeateddates(owner_tsdf, 'Data')
                 owner_tsdf = owner_tsdf.sort_values(by='Data', ascending=True)
                 owner_tsdf = owner_tsdf.reset_index(drop=True)
-
                 params_df[param] = owner_tsdf
                 tidaldf[tide] = params_df
 
@@ -215,5 +201,5 @@ def estudosvolun(risco, rivername, df, cols, str_filters, allrivers, allowners, 
                     with pd.ExcelWriter(f'dataframes\{risco}\{owner}\{mode.upper()}_{rivername}_{risco}_{owner}_{tidal}.xlsx') as writer:
                         for tsdf in timeseries[owner][tidal].keys():
                             timeseries[owner][tidal][tsdf].to_excel(writer, sheet_name=tsdf)
-    # print(timeseries)
+
     return {'dataframes': timeseries, 'ownermax': ownermaxvals, 'overallmax': overallmax} 

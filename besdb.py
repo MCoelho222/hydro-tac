@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from src.app.utils.challenge import removerepeateddates
-# from src.app.utils.graphs import hydroplots
 from src.app.utils import ordered_bes_sites
 from src.app.beseflu import read_beseflu
 
@@ -10,12 +9,9 @@ from src.app.beseflu import read_beseflu
 def read_bes(df, comun_cols, pt_colname, params, risco, mode):
     dfcols = comun_cols[:]
     dfcols.extend(params)
-    # print(dfcols)
     main_df = df[dfcols]
-    # print(main_df.columns.tolist())
     pts = main_df[pt_colname].drop_duplicates()
     pts = pts.reset_index(drop=True)
-    # print(pts)
     for idx in pts.index:
         if pts.loc[idx] == 'VMP' or pts.loc[idx] == 'Unidade':
             pts = pts.drop(idx)
@@ -34,16 +30,12 @@ def read_bes(df, comun_cols, pt_colname, params, risco, mode):
         except:
             pass
     mare = mare.drop_duplicates()
-    # print(mare)
-    # asd
     mare = mare.reset_index(drop=True)
     mare = mare.drop(len(mare) - 1)
     mares = mare.values.tolist()
     todasmares = mare.values.tolist()
     ind = mares.index('sem_mare')
     mares.pop(ind)
-    # print(mare)
-    # asd
     
     units = {}
     vmps = {}
@@ -69,7 +61,6 @@ def read_bes(df, comun_cols, pt_colname, params, risco, mode):
                 vmps[param] = 250.
             if param == 'Fósforo total':
                 vmps[param] = 0.1
-    # print(units)
     overallmax = {}
     for param in params:
         df_max = main_df[param].loc[:len(main_df) - 3]
@@ -77,17 +68,10 @@ def read_bes(df, comun_cols, pt_colname, params, risco, mode):
         df_max = df_max.dropna()
         maxvalue = df_max.max()
         overallmax[param] = maxvalue
-    # print(overallmax)
-    # print(overallmax)
-    # asd
-    # print(vmps)
     pts = pts.reset_index(drop=True)
-    # print(pts)
     alltidesdfs = {}
     for tide in mares:
         
-        # unique_mares = main_df['mare'].drop_duplicates()
-        # mare = mare.reset_index(drop=True)
         mare_col = main_df['mare']
         for i in range(len(mare_col)):
             cell_value = mare_col.loc[i]
@@ -116,11 +100,9 @@ def read_bes(df, comun_cols, pt_colname, params, risco, mode):
                     allparams_pt_df = param_mare_df[param_mare_df[pt_colname] == pts.loc[idx]]
                     if len(allparams_pt_df) == 0:
                         continue
-                    # print(params_df_cols)
                     param_pt_df = allparams_pt_df[params_df_cols]
                     param_pt_df[param] = pd.to_numeric(param_pt_df[param], errors='coerce')
                     param_pt_df = param_pt_df.dropna()
-                    # print('HEY', len(param_pt_df))
                     if len(param_pt_df) >= 2:
                         param_pt_df = removerepeateddates(param_pt_df, 'Data', result_col=param)
                       
@@ -129,10 +111,6 @@ def read_bes(df, comun_cols, pt_colname, params, risco, mode):
                     param_df = param_df.merge(pointdf, how='outer', on='Data')
                     
                 if len(param_df) > 0:
-                    # print(tide)
-                    # print(param)
-                    # print(param_df[['Data', 'SUP47']].values.tolist())
-                    # asd
                     ind = params_df_cols.index(param)
 
                     if mode == 'sed':
@@ -276,29 +254,30 @@ if __name__ == "__main__":
     from src.app.utils.graphs import besplotmare, besplotall
     
     # RISCO 12
-    # df = pd.read_excel('Anexo VI - Resultados analíticos gerais – qualidade das águas superficiais.xlsx', sheet_name='Sheet2')
+    df = pd.read_excel('data/Anexo VI - Resultados analíticos gerais – qualidade das águas superficiais.xlsx', sheet_name='Sheet2')
     
     # sup_params = ['Fósforo total', 'Sulfato']
-    # besdf = pd.read_excel('Anexo II - Resultados analíticos gerais - efluentes.xlsx', sheet_name='Sheet1')
+    # besdf = pd.read_excel('data/Anexo II - Resultados analíticos gerais - efluentes.xlsx', sheet_name='Sheet1')
     # RISCO 13
-    # df = pd.read_excel('Anexo VI - Resultados analíticos gerais – qualidade das águas superficiais.xlsx', sheet_name='Sheet2')
-    df = pd.read_excel('Transposta_SE_11082022_copy.xlsx', sheet_name='Sheet1')
+    sup_params = ['Alumínio dissolvido', 'Ferro dissolvido', 'Sólidos dissolvidos totais']
+    # df = pd.read_excel('data/Anexo VI - Resultados analíticos gerais – qualidade das águas superficiais.xlsx', sheet_name='Sheet2')
+    # df = pd.read_excel('data/Transposta_SE_11082022_copy.xlsx', sheet_name='Sheet1')
     # sup_params = ['Sulfato', 'Sódio total', 'pH']
     
     #RISCO 07
-    sup_params = ['Sólidos dissolvidos totais', 'Coliformes Termotolerantes', 'pH', 'DBO', 'OD', 'Óleos e Graxas', 'Fósforo total', 'Bário total', 'Cromo total', 'Vanádio total', 'Zinco total', 'Arsênio total', 'Manganês total', 'Chumbo total', 'Ferro dissolvido', 'Alumínio dissolvido', 'Mercúrio total', 'Sódio total', 'Sulfato total', 'Silício total']
+    # sup_params = ['Sólidos dissolvidos totais', 'Coliformes Termotolerantes', 'pH', 'DBO', 'OD', 'Óleos e Graxas', 'Fósforo total', 'Bário total', 'Cromo total', 'Vanádio total', 'Zinco total', 'Arsênio total', 'Manganês total', 'Chumbo total', 'Ferro dissolvido', 'Alumínio dissolvido', 'Mercúrio total', 'Sódio total', 'Sulfato total', 'Silício total']
 
-    eflu_params = ['Sólidos sedimentáveis', 'Temperatura', 'Sólidos dissolvidos totais', 'pH', 'Óleos e graxas minerais', 'Óleos e graxas vegetais e animais', 'Oxigênio dissolvido', 'DBO']
-    # sed_params = ['Alumínio', 'Ferro']
+    eflu_params = ['Sólidos sedimentáveis', 'Temperatura', 'Sólidos dissolvidos totais', 'pH', 'Óleos e graxas minerais', 'Óleos e graxas vegetais e animais', 'Oxigênio dissolvido', 'DBO', 'Sulfato']
+    sed_params = ['Alumínio', 'Ferro']
     #RISCO 07
-    sed_params = ['Arsênio', 'Alumínio', 'Ferro', 'Cromo', 'Chumbo', 'Fósforo', 'Bário', 'Vanádio', 'Cobalto', 'Mercúrio', 'Manganês', 'Sódio', 'Sulfato', 'Zinco', 'Sílica']
+    # sed_params = ['Arsênio', 'Alumínio', 'Ferro', 'Cromo', 'Chumbo', 'Fósforo', 'Bário', 'Vanádio', 'Cobalto', 'Mercúrio', 'Manganês', 'Sódio', 'Sulfato', 'Zinco', 'Sílica']
 
     comun_cols = ['Data', 'Parâmetro', 'mare']
     eflu_comun_cols = ['Data', 'Parâmetro']
     
     sup_baseline = {'risk13': {'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sólidos dissolvidos totais': 123}, 'risk17': {'Sulfato': 3.09, 'Sódio total': 4.9, 'pH': 5.22}, 'risk07': {'Sólidos dissolvidos totais': 123, 'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sulfato total': 3.09, 'Sódio total': 4.9, 'pH': 5.22, 'Coliformes Termotolerantes': 160, 'DBO': 3.44, 'OD': 4.31, 'Óleos e Graxas': 0.0, 'Fósforo total': 0.06, 'Bário total': 0.04, 'Vanádio total': 0.01, 'Zinco total': 0.08, 'Arsênio total': 0.066, 'Manganês total': 0.09, 'Chumbo total': 0.02, 'Mercúrio total': 0.0002, 'Cromo total': 0.01, 'Silício total': 4.38}}
     
-    sed_baseline = {'risk13': {'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 67240, 'med': 7488}}, 'risk07': {'Arsênio': {'max': 13.6, 'med': 1.39}, 'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 67240, 'med': 7488}, 'Chumbo': {'max': 7.85, 'med': 3.06}, 'Fósforo': {'max': 313, 'med': 55}, 'Bário': {'max': 69.8, 'med': 5.75}, 'Vanádio': {'max': 256, 'med': 18.2}, 'Mercúrio': {'max': 0.08, 'med': 0.0242}, 'Manganês': {'max': 1796, 'med': 58.5}, 'Sódio': {'max': 126, 'med': 73.7}, 'Sulfato': {'max': 6.650, 'med': 2.37}, 'Zinco': {'max': 27.1, 'med': 9.15}, 'Cromo': {'max':138, 'med': 9.98}, 'Cobalto': {'max':3.84, 'med': 1.63}, 'Sílica': {'max':8.7, 'med': 4.37}}}
+    sed_baseline = {'risk13': {'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 21622, 'med': 7488}}, 'risk07': {'Arsênio': {'max': 4.64, 'med': 1.39}, 'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 21622, 'med': 7488}, 'Chumbo': {'max': 6.01, 'med': 3.06}, 'Fósforo': {'max': 313, 'med': 55}, 'Bário': {'max': 69.8, 'med': 9.27}, 'Vanádio': {'max': 93.3, 'med': 18.2}, 'Mercúrio': {'max': 0.08, 'med': 0.04}, 'Manganês': {'max': 1796, 'med': 63.4}, 'Sódio': {'max': 126, 'med': 73.7}, 'Sulfato': {'max': 6.650, 'med': 2.3}, 'Zinco': {'max': 27.1, 'med': 13.3}, 'Cromo': {'max':28.1, 'med': 9.98}, 'Cobalto': {'max':3.84, 'med': 1.54}, 'Sílica': {'max':8.7, 'med': 4.37}}}
     
     
     sed_period = '31-08-2020 a 26-04-2022'
@@ -306,13 +285,13 @@ if __name__ == "__main__":
     eflu_period = '26-08-2020 a 08-09-2021'
     
     
-    risco = 'RISCO_07'
-    mode = 'sed'
-    figtitle_mares = f'RCA PCA Alunorte ({sed_period}) - pontos com maré'
-    figtitle = f'RCA PCA Alunorte ({sed_period})'
-    toplot = read_bes(df, comun_cols, 'Parâmetro', sed_params, risco, mode)
+    risco = 'RISCO_13'
+    mode = 'sup'
+    figtitle_mares = f'águas superficiais ({sup_period}) - pontos com maré'
+    figtitle = f'águas superficiais ({sup_period})'
+    toplot = read_bes(df, comun_cols, 'Parâmetro', sup_params, risco, mode)
     # toplot = read_beseflu(besdf, eflu_comun_cols, 'Parâmetro', eflu_params, risco, mode)
     # besplotall(toplot['dataframes'], toplot['overallmax'], figtitle, mode, risco, leg_position='best')
-    besplotall(toplot['dataframes']['media_mares'], toplot['overallmax'], figtitle, mode, risco, sed_baseline['risk07'], 'best')
-    besplotmare(toplot['dataframes']['permares'], toplot['overallmax'], figtitle_mares, sed_baseline['risk07'], mode, risco)
+    besplotall(toplot['dataframes']['media_mares'], toplot['overallmax'], figtitle, mode, risco, sup_baseline['risk13'], 'best')
+    besplotmare(toplot['dataframes']['permares'], toplot['overallmax'], figtitle_mares, sup_baseline['risk13'], mode, risco)
     

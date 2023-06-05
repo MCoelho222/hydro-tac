@@ -8,11 +8,11 @@ if __name__ == "__main__":
 
     
     # ASUP
-    # df = pd.read_excel('estudos_vonluntarios_agua_superficial_revc.xlsx', sheet_name='Água Superficial')
+    df = pd.read_excel('data/estudos_vonluntarios_agua_superficial_revc.xlsx', sheet_name='Água Superficial')
     # SED
-    df = pd.read_excel('estudos_voluntarios_sedimento_REVC.xlsx', sheet_name='Sedimento')
+    # df = pd.read_excel('data/estudos_voluntarios_sedimento_REVC.xlsx', sheet_name='Sedimento')
 
-    # df = pd.read_excel('BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
+    # df = pd.read_excel('data/BD_hydro_rev120_22-07-2022.xlsm', sheet_name='Versão 120_GS')
     
     cols_volun = ['Empresa responsável', 'Local', 'Ponto', 'Data da coleta', 'Maré', 'Parâmetros', 'Resultado', 'Unidade', 'VMP', 'Legislação']
 
@@ -57,21 +57,22 @@ if __name__ == "__main__":
     
     sed_risk_params = {'risk13': ('Alumínio', 'Ferro'), 'risk07': ('Arsênio', 'Alumínio', 'Ferro', 'Cromo', 'Chumbo', 'Fósforo', 'Bário', 'Vanádio', 'Silício', 'Cobalto', 'Mercúrio', 'Manganês', 'Sódio', 'Sulfato', 'Zinco')}
     
-    sup_risk_params = {'risk12': ('Fósforo Total', 'Sulfato', 'Enxofre'), 'risk17': ('Sulfato', 'Sódio total', 'pH'), 'risk13': ('Alumínio dissolvido', 'Ferro dissolvido', 'Sólidos dissolvidos totais'), 'risk07': ('Sólidos dissolvidos totais', 'Coliformes Termotolerantes', 'pH', 'DBO', 'OD', 'Óleos e Graxas', 'Fósforo total', 'Bário total', 'Cromo total', 'Vanádio total', 'Zinco total', 'Arsênio total', 'Manganês total', 'Chumbo total', 'Ferro dissolvido', 'Alumínio dissolvido', 'Mercúrio total', 'Sódio total', 'Sulfato total')} # 'Sílica total'
+    sup_risk_params = {'risk12': ('Fósforo total', 'Sulfato total', 'Enxofre'), 'risk17': ('Sulfato total', 'Sódio total', 'pH'), 'risk13': ('Alumínio dissolvido', 'Ferro dissolvido', 'Sólidos dissolvidos totais'), 'risk07': ('Sólidos dissolvidos totais', 'Coliformes Termotolerantes', 'pH', 'DBO', 'OD', 'Óleos e Graxas', 'Fósforo total', 'Bário total', 'Cromo total', 'Vanádio total', 'Zinco total', 'Arsênio total', 'Manganês total', 'Chumbo total', 'Ferro dissolvido', 'Alumínio dissolvido', 'Mercúrio total', 'Sódio total', 'Sulfato total')} # 'Sílica total'
 
-    sup_baseline = {'risk13': {'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sólidos dissolvidos totais': 123}, 'risk17': {'Sulfato': 3.09, 'Sódio total': 4.9, 'pH': 5.22}, 'risk12': {'Fósforo Total': 0.06, 'Sulfato': 3.09}, 'risk07': {'Sólidos dissolvidos totais': 123, 'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sulfato total': 3.09, 'Sódio total': 4.9, 'pH': 5.22, 'Coliformes Termotolerantes': 160, 'DBO': 3.44, 'OD': 4.31, 'Óleos e Graxas': 0.0, 'Fósforo total': 0.06, 'Bário total': 0.04, 'Vanádio total': 0.01, 'Zinco total': 0.08, 'Arsênio total': 0.066, 'Manganês total': 0.09, 'Chumbo total': 0.02, 'Mercúrio total': 0.0002, 'Cromo total': 0.01}}
+    sup_baseline = {'risk13': {'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sólidos dissolvidos totais': 123}, 'risk17': {'Sulfato': 3.09, 'Sódio total': 4.9, 'pH': 5.22}, 'risk12': {'Fósforo total': 0.06, 'Sulfato': 3.09}, 'risk07': {'Sólidos dissolvidos totais': 123, 'Alumínio dissolvido': 0.21, 'Ferro dissolvido': 0.47, 'Sulfato total': 3.09, 'Sódio total': 4.9, 'pH': 5.8, 'Coliformes Termotolerantes': 160, 'DBO': 3.44, 'OD': 4.9, 'Óleos e Graxas': 0.0, 'Fósforo total': 0.03, 'Bário total': 0.03, 'Vanádio total': 0.01, 'Zinco total': 0.08, 'Arsênio total': 0.066, 'Manganês total': 0.04, 'Chumbo total': 0.02, 'Mercúrio total': 0.0002, 'Cromo total': 0.05}}
     
-    sed_baseline = {'risk13': {'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 67240, 'med': 6894}}, 'risk07': {'Arsênio': {'max': 13.6, 'med': 1.39}, 'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 67240, 'med': 7488}, 'Chumbo': {'max': 7.85, 'med': 3.06}, 'Fósforo': {'max': 313, 'med': 55}, 'Bário': {'max': 69.8, 'med': 5.75}, 'Vanádio': {'max': 256, 'med': 18.2}, 'Mercúrio': {'max': 0.08, 'med': 0.0242}, 'Manganês': {'max': 1796, 'med': 58.5}, 'Sódio': {'max': 126, 'med': 73.7}, 'Sulfato': {'max': 6.650, 'med': 2.37}, 'Zinco': {'max': 27.1, 'med': 9.15}, 'Cromo': {'max':138, 'med': 9.98}, 'Cobalto': {'max':3.84, 'med': 1.63}, 'Sílica': {'max':8.7, 'med': 4.37}}}
+    sed_baseline = {'risk13': {'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 21622, 'med': 7488}}, 'risk07': {'Arsênio': {'max': 4.64, 'med': 1.39}, 'Alumínio': {'max': 20217, 'med': 3389}, 'Ferro': {'max': 21622, 'med': 7488}, 'Chumbo': {'max': 6.01, 'med': 3.06}, 'Fósforo': {'max': 313, 'med': 55}, 'Bário': {'max': 69.8, 'med': 9.27}, 'Vanádio': {'max': 93.3, 'med': 18.2}, 'Mercúrio': {'max': 0.08, 'med': 0.04}, 'Manganês': {'max': 1796, 'med': 63.4}, 'Sódio': {'max': 126, 'med': 73.7}, 'Sulfato': {'max': 6.650, 'med': 2.3}, 'Zinco': {'max': 27.1, 'med': 13.3}, 'Cromo': {'max':28.1, 'med': 9.98}, 'Cobalto': {'max':3.84, 'med': 1.54}, 'Sílica': {'max':8.7, 'med': 4.37}}}
     
-    # rivers = ['murucupi', 'para', 'taua', 'pramajo', 'pramajozinho', 'aguaverde']
-    rivers = ['murucupi',]
+    rivers = ['murucupi', 'para', 'taua', 'pramajo', 'pramajozinho', 'aguaverde']
+    # rivers = ['murucupi',]
+    # owners = ['Enviro-Tec',]
     owners = ['Geoklock', 'Enviro-Tec', 'SGW']
-    risk_title = 'RISCO_07'
+    risk_title = 'RISCO_13'
     # risk_title = 'TESTE'
-    mode = 'sed'
-    sup_risk = sup_risk_params['risk07']
+    mode = 'sup'
+    sup_risk = sup_risk_params['risk13']
     
-    sed_risk = sed_risk_params['risk07']
+    sed_risk = sed_risk_params['risk13']
     
     
         
@@ -82,8 +83,6 @@ if __name__ == "__main__":
     # val_filter_dict = {'Resultado': ('positive', 'nan')}
 
     # ts_df = estudosvolun(risk_title, 'resume', df, cols_volun, str_filter_dict, allrivers, owners, mode, val_filters=val_filter_dict, ts=ts_dict)
-    # # print(ts_df['overallmax'])
-    # # print(ts_df['ownermax'])
     # if len(ts_df['dataframes']) > 0:
     #     voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], 'águas superficiais', risk_title, sup_baseline['risk17'], mode, 'best')
     
@@ -93,15 +92,13 @@ if __name__ == "__main__":
         
         for j in range(len(owners)):
 
-            str_filter_dict = {'param': ('Parâmetros', sed_risk), 'site': ('Local', rivers_name[rivers[i]]), 'owner': ('Empresa responsável', (owners[j],))}
+            str_filter_dict = {'param': ('Parâmetros', sup_risk), 'site': ('Local', rivers_name[rivers[i]]), 'owner': ('Empresa responsável', (owners[j],))}
 
             val_filter_dict = {'Resultado': ('positive', 'nan')}
         
             ts_df = estudosvolun(risk_title, rivers[i], df, cols_volun, str_filter_dict, allrivers, owners, mode, val_filters=val_filter_dict, ts=ts_dict)
-            # print(ts_df['overallmax'])
-            # print(ts_df['ownermax'])
             if len(ts_df['dataframes']) > 0:
-                voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], figtitles[i], risk_title, sed_baseline['risk07'], mode, positions[rivers[i]])
+                voluntariosplot(ts_df['dataframes'], ts_df['overallmax'], figtitles[i], risk_title, sup_baseline['risk13'], mode, positions[rivers[i]])
    
 
     # cols_hydro = ['Código do ponto', 'Local', 'Data Coleta', 'Parâmetro', 'Valor', 'Unidade', 'VMP']
@@ -111,5 +108,5 @@ if __name__ == "__main__":
     # val_filter_dict = {'Valor': ('positive', 'nan')}
 
     # dfs = hydroalunorte(risk_title, df, cols_hydro, str_filter_dict, mode, val_filters=val_filter_dict, ts=ts_dict)
-
-    # hydroplots(dfs['dataframes']['perparam'], dfs['overallmax'], 'monit_cont', 'monitoramento contínuo', risk_title, sup_baseline['risk07'], mode, 'best')
+    # print(dfs)
+    # hydroplots(dfs['dataframes']['perparam'], dfs['overallmax'], 'monit_cont', 'monitoramento contínuo', risk_title, sup_baseline['risk13'], mode, leg_position='best')

@@ -7,7 +7,6 @@ from src.app.utils import replace_as_lastcols
 def eflu_etei(df, cols, params, pts, risco, mode, owner, renames=None):
     
     main_df = df[cols]
-    # print(params)
     datecol = 'Data da coleta'
     resultcol = 'Resultado'
     paramcol = 'Parâmetros'     
@@ -25,10 +24,8 @@ def eflu_etei(df, cols, params, pts, risco, mode, owner, renames=None):
     with pd.ExcelWriter(f'dataframes\{risco}\{mode.upper()}_{risco.lower()}_{owner.upper()}.xlsx') as writer:
 
         for param in params:
-            # print(param)
             
             param_df = main_df[main_df[paramcol] == param]
-            # print(len(param_df))
 
             if len(param_df) == 0:
                 continue
@@ -37,19 +34,14 @@ def eflu_etei(df, cols, params, pts, risco, mode, owner, renames=None):
             param_tsdf['Data'] = pd.to_datetime(param_tsdf['Data'])
             param_tsdf.set_index('Data')
             for pt in pts:
-                # print(pt)
                 pt_df = param_df[param_df[ptcol] == pt]
                 pt_df.loc[:, resultcol] = pd.to_numeric(pt_df[resultcol], errors='coerce')
                 pt_df.dropna()
 
                 if len(pt_df) > 0 and pt_df[resultcol].max() > 0:
-                    # print(pt)
                     pt_df = pt_df.reset_index(drop=True)
-                    # print(len(pt_df))
                     pt_df.loc[:, resultcol] = pd.to_numeric(pt_df[resultcol], errors='coerce')
-                    # print(len(pt_df))
                     pt_df = pt_df[pt_df[resultcol] >= 0.]
-                    # print(len(pt_df))
                     pt_df = pt_df.reset_index(drop=True)
                     pt_tsdf = pd.DataFrame()
                     for i in range(len(pt_df)):

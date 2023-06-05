@@ -2,33 +2,21 @@ def sort_str_endswithnum(str_endwithnum_list, split_char):
     ints = []
     ordered_sites = []
     for k in str_endwithnum_list:
-        print(str_endwithnum_list)
-        print(k)
+        if k[-1] == ' ':
+            k.pop()
         point = k.split(split_char)[1]
-        # print(point)
         idx = -1
         while True:
             try:
                 ints.append(int(point))
                 break
             except ValueError:
-                # print('POINT', str_endwithnum_list)
-                point = point[:idx]
+                point = point[:-1]
                 continue
-                
-                # try:
-                #     ints.append(int(point[:idx]))
-                # except:
-                #     idx -= 1
-                #     continue
-            # print(ints)
-    # print(ints)
     ints.sort()
-    # print(ints)
     for k in range(len(ints)):
         for l in str_endwithnum_list:
             element = l.split(split_char)[1]
-            # print(element)
             while True:
                 try:
                     if int(element) == ints[k]:
@@ -38,13 +26,6 @@ def sort_str_endswithnum(str_endwithnum_list, split_char):
                 except ValueError:
                     element = element[:-1]
                     continue
-                    # element = l.split(split_char)[1][:-1]
-                    # if int(element) == ints[k]:
-                    #     ordered_sites.append(l)
-            # print(element)
-    # print(ints)
-    # print(ordered_sites)
-    # asd
     for item in ordered_sites:
         if item not in str_endwithnum_list:
             idx = ordered_sites.index(item)
@@ -54,24 +35,19 @@ def sort_str_endswithnum(str_endwithnum_list, split_char):
     for item in ordered_sites:
         if item not in finallist:
             finallist.append(item)
-        
 
-    # print(finallist)
-    # asd
     return finallist
+
+
 def sort_bespts(points):
-    # print(str_endwithnum_list)
     ints = []
     ordered_sites = []
     for k in points:
-        # print(str_endwithnum_list)
         point = k[3:]
         
-        # print(points)
         ints.append(int(point))
                
     ints.sort()
-    # print(ints)
     for k in range(len(ints)):
         for l in points:
             element = l[3:]
@@ -88,10 +64,9 @@ def sort_bespts(points):
     for item in ordered_sites:
         if item not in finallist:
             finallist.append(item)
-        
 
-    # print(finallist)
     return finallist
+
 
 def replace_as_lastcols(df, lastcols):
 
@@ -105,6 +80,7 @@ def replace_as_lastcols(df, lastcols):
     
     return df
 
+
 def ordered_bes_sites(order, cols):
     tidal_col_ints = []
     for i in range(len(cols)):
@@ -113,4 +89,14 @@ def ordered_bes_sites(order, cols):
     for i in range(len(order)):
         if order[i] in tidal_col_ints:
             ordered_tidal_cols.append(order[i])
+
     return ordered_tidal_cols
+
+
+def ordered_hydro_sites(order, cols):
+    ordered = []
+    for i in range(len(order)):
+        if order[i] in cols:
+            ordered.append(order[i])
+
+    return ordered
